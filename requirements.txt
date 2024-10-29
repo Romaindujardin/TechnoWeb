@@ -4,3 +4,8 @@
 rxjs
 typescript
 @types/node
+dotenv
+typeorm
+class-validator 
+class-transformer
+@nestjs/typeorm
