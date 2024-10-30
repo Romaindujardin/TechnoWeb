@@ -4,6 +4,7 @@ import { BooksModule } from './modules/books/books.module';
 import { DatabaseModule } from './modules/database/database.module'; // Votre module de base de données
 import { AppController } from './app.controller'; // Assurez-vous que le bon contrôleur est importé
 import { AppService } from './app.service'; // Assurez-vous que le bon contrôleur est importé
+import { AuthorsModule } from './modules/authors/authors.module'; // Import du module
 
 
 @Module({
@@ -16,6 +17,7 @@ import { AppService } from './app.service'; // Assurez-vous que le bon contrôle
     }),
     DatabaseModule,
     BooksModule,
+    AuthorsModule, // Ajout du module ici
     
   ],
   controllers: [AppController], // Ajoutez le contrôleur ici
