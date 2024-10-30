@@ -1,6 +1,8 @@
 // ici on vient definir ce que represente un livre
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Author } from '../../authors/entities/author.entity';
+import { Review } from '../../review/entities/review.entity';
+
 
 @Entity('books')
 export class Book {
@@ -18,5 +20,9 @@ export class Book {
 
     @ManyToOne(() => Author, (author) => author.books, { eager: true })
     author: Author;
+
+    // Ajout de la relation avec Review
+    @OneToMany(() => Review, (review) => review.book)
+    reviews: Review[];
 }
 
