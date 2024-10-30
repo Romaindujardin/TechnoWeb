@@ -1,7 +1,15 @@
-// modules/authors/dtos/create-author.dto.ts
+import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
+
 export class CreateAuthorDto {
-    name: string;
-    photo?: string;
-    biography?: string;
-  }
-  
+  @IsNotEmpty()
+  @IsString()
+  name: string;
+
+  @IsOptional()
+  @IsString()
+  photo?: string;
+
+  @IsOptional()
+  @IsString()
+  biography?: string;
+}
