@@ -1,39 +1,49 @@
 // modules/authors/authors.controller.ts
-import { Controller, Get, Post, Body, Param, Patch, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Patch,
+  Delete,
+} from '@nestjs/common';
 import { AuthorsService } from './authors.service';
 import { CreateAuthorDto } from './dtos/create-author.dto';
 import { UpdateAuthorDto } from './dtos/update-author.dto';
-import { Author } from './entities/author.entity';
+import { AuthorPresenter } from './presenters/author.presenter'; // Importez AuthorPresenter
 
 @Controller('authors')
 export class AuthorsController {
   constructor(private readonly authorsService: AuthorsService) {}
 
   @Post()
-  create(@Body() createAuthorDto: CreateAuthorDto): Promise<Author> {
-    return this.authorsService.create(createAuthorDto);
+  async create(
+    @Body() createAuthorDto: CreateAuthorDto,
+  ): Promise<AuthorPresenter> {
+    return this.authorsService.create(createAuthorDto); // Le service retourne déjà AuthorPresenter
   }
 
   @Get()
-  findAll(): Promise<Author[]> {
-    return this.authorsService.findAll();
+  async findAll(): Promise<AuthorPresenter[]> {
+    return this.authorsService.findAll(); // Le service retourne déjà AuthorPresenter[]
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<Author> {
-    return this.authorsService.findOne(+id);
+  async findOne(@Param('id') id: string): Promise<AuthorPresenter> {
+    return this.authorsService.findOne(+id); // Le service retourne déjà AuthorPresenter
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateAuthorDto: UpdateAuthorDto,
-  ): Promise<Author> {
-    return this.authorsService.update(+id, updateAuthorDto);
+  ): Promise<AuthorPresenter> {
+    return this.authorsService.update(+id, updateAuthorDto); // Le service retourne déjà AuthorPresenter
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<void> {
+  async remove(@Param('id') id: string): Promise<void> {
     return this.authorsService.remove(+id);
   }
 }
