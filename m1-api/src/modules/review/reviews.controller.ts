@@ -11,37 +11,43 @@ import {
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dtos/Create-review.dto';
 import { UpdateReviewDto } from './dtos/Update-review.dto';
-import { Review } from './entities/review.entity';
+import { ReviewPresenter } from './presenters/review.presenter'; // Import du presenter
 
 @Controller('reviews')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
   @Post()
-  create(@Body() createReviewDto: CreateReviewDto): Promise<Review> {
-    return this.reviewsService.create(createReviewDto);
+  async create(
+    @Body() createReviewDto: CreateReviewDto,
+  ): Promise<ReviewPresenter> {
+    const review = await this.reviewsService.create(createReviewDto);
+    return new ReviewPresenter(review); // Retourne le presenter
   }
 
   @Get()
-  findAll(): Promise<Review[]> {
-    return this.reviewsService.findAll(); // Appellez findAll() du service
+  async findAll(): Promise<ReviewPresenter[]> {
+    const reviews = await this.reviewsService.findAll();
+    return reviews.map((review) => new ReviewPresenter(review)); // Transformation de chaque review avec le presenter
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number): Promise<Review> {
-    return this.reviewsService.findOne(id);
+  async findOne(@Param('id') id: number): Promise<ReviewPresenter> {
+    const review = await this.reviewsService.findOne(id);
+    return new ReviewPresenter(review); // Transformation en presenter
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id') id: number,
     @Body() updateReviewDto: UpdateReviewDto,
-  ): Promise<Review> {
-    return this.reviewsService.update(id, updateReviewDto);
+  ): Promise<ReviewPresenter> {
+    const review = await this.reviewsService.update(id, updateReviewDto);
+    return new ReviewPresenter(review); // Transformation en presenter
   }
 
   @Delete(':id')
-  delete(@Param('id') id: number): Promise<void> {
-    return this.reviewsService.delete(id);
+  async delete(@Param('id') id: number): Promise<void> {
+    await this.reviewsService.delete(id);
   }
 }
