@@ -5,6 +5,8 @@ import { DatabaseModule } from './modules/database/database.module'; // Votre mo
 import { AppController } from './app.controller'; // Assurez-vous que le bon contrôleur est importé
 import { AppService } from './app.service'; // Assurez-vous que le bon contrôleur est importé
 import { AuthorsModule } from './modules/authors/authors.module'; // Import du module
+import { Review } from './modules/review/entities/review.entity';
+import { ReviewsModule } from './modules/review/reviews.module';
 
 
 @Module({
@@ -18,6 +20,7 @@ import { AuthorsModule } from './modules/authors/authors.module'; // Import du m
     DatabaseModule,
     BooksModule,
     AuthorsModule, // Ajout du module ici
+    ReviewsModule
     
   ],
   controllers: [AppController], // Ajoutez le contrôleur ici
