@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { Author } from './entities/author.entity';
 import { CreateAuthorDto } from './dtos/create-author.dto';
 import { UpdateAuthorDto } from './dtos/update-author.dto';
+import { AuthorPresenter } from './presenters/author.presenter'; // Assurez-vous d'importer le Presenter
 
 @Injectable()
 export class AuthorsService {
@@ -13,26 +14,31 @@ export class AuthorsService {
     private authorsRepository: Repository<Author>,
   ) {}
 
-  async create(createAuthorDto: CreateAuthorDto): Promise<Author> {
+  async create(createAuthorDto: CreateAuthorDto): Promise<AuthorPresenter> {
     const author = this.authorsRepository.create(createAuthorDto);
-    return this.authorsRepository.save(author);
+    await this.authorsRepository.save(author);
+    return new AuthorPresenter(author); // Retourner un AuthorPresenter
   }
 
-  async findAll(): Promise<Author[]> {
-    return this.authorsRepository.find();
+  async findAll(): Promise<AuthorPresenter[]> {
+    const authors = await this.authorsRepository.find();
+    return authors.map((author) => new AuthorPresenter(author)); // Mapper à AuthorPresenter
   }
 
-  async findOne(id: number): Promise<Author> {
+  async findOne(id: number): Promise<AuthorPresenter> {
     const author = await this.authorsRepository.findOneBy({ id });
     if (!author) {
       throw new NotFoundException(`Author with ID ${id} not found`);
     }
-    return author;
+    return new AuthorPresenter(author); // Retourner un AuthorPresenter
   }
 
-  async update(id: number, updateAuthorDto: UpdateAuthorDto): Promise<Author> {
+  async update(
+    id: number,
+    updateAuthorDto: UpdateAuthorDto,
+  ): Promise<AuthorPresenter> {
     await this.authorsRepository.update(id, updateAuthorDto);
-    return this.findOne(id);
+    return this.findOne(id); // La méthode findOne retournera déjà un AuthorPresenter
   }
 
   async remove(id: number): Promise<void> {
