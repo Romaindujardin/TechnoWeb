@@ -9,7 +9,7 @@ Cela crée un dossier DriveMe dans leur répertoire utilisateur, qui contient to
 
 ### Naviguer dans le dossier cloné :
 Ils doivent se déplacer dans le dossier cloné :
-"cd DriveMe"
+"cd TechnoWeb"
 
 ### Créer une nouvelle branche :
 Ils créent une nouvelle branche pour travailler sur leurs modifications, par exemple pour ajouter des assets :
