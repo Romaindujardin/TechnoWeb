@@ -11,6 +11,7 @@ import { BooksService } from './books.service';
 import { CreateBookDto } from './dtos/create-book.dto';
 import { UpdateBookDto } from './dtos/update-book.dto';
 import { BookPresenter } from './presenters/book.presenter'; // Importez le BookPresenter
+import { Book } from './entities/book.entity'; // Importez le type Book
 
 @Controller('books')
 export class BooksController {
@@ -18,8 +19,12 @@ export class BooksController {
 
   @Get()
   async findAll(): Promise<BookPresenter[]> {
-    // Spécifiez le type de retour
-    return this.booksService.findAll();
+    return this.booksService.findAll(); // Appel de la méthode findAll() du service
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: number): Promise<Book> {
+    return this.booksService.findOne(id);
   }
 
   @Post()

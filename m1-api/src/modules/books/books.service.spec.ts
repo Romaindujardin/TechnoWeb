@@ -1,18 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BooksService } from './books.service';
+import { BooksRepository } from './books.repository';
 import { Book } from './entities/book.entity';
-import { BookPresenter } from './presenters/book.presenter'; // Importez BookPresenter
+import { BookPresenter } from './presenters/book.presenter';
 
 describe('BooksService', () => {
   let service: BooksService;
 
-  const mockBookRepository = {
+  const mockBooksRepository = {
     find: jest.fn(),
-    create: jest.fn(),
-    save: jest.fn(),
-    update: jest.fn(),
-    findOne: jest.fn(),
-    delete: jest.fn(),
+    createBook: jest.fn(),
+    updateBook: jest.fn(),
+    deleteBook: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -20,8 +19,8 @@ describe('BooksService', () => {
       providers: [
         BooksService,
         {
-          provide: 'BookRepository', // Utilisez le bon identifiant de fournisseur
-          useValue: mockBookRepository,
+          provide: BooksRepository,
+          useValue: mockBooksRepository,
         },
       ],
     }).compile();
@@ -32,12 +31,11 @@ describe('BooksService', () => {
   it('should return an array of books', async () => {
     const book = new Book();
     const result = [book];
-    mockBookRepository.find.mockReturnValue(result);
+    mockBooksRepository.find.mockResolvedValue(result);
 
-    // Utilisez BookPresenter ici
     const expected = result.map((b) => new BookPresenter(b));
-    expect(await service.findAll()).toEqual(expected); // Changer .toBe en .toEqual
-    expect(mockBookRepository.find).toHaveBeenCalled();
+    expect(await service.findAll()).toEqual(expected);
+    expect(mockBooksRepository.find).toHaveBeenCalled();
   });
 
   it('should create a book', async () => {
@@ -47,15 +45,34 @@ describe('BooksService', () => {
       authorId: 1,
     };
     const book = new Book();
-    mockBookRepository.create.mockReturnValue(book);
-    mockBookRepository.save.mockReturnValue(book);
+    mockBooksRepository.createBook.mockResolvedValue(book);
 
-    // Utilisez BookPresenter ici
     const expected = new BookPresenter(book);
-    expect(await service.create(createBookDto)).toEqual(expected); // Changer .toBe en .toEqual
-    expect(mockBookRepository.create).toHaveBeenCalledWith(createBookDto);
-    expect(mockBookRepository.save).toHaveBeenCalledWith(book);
+    expect(await service.create(createBookDto)).toEqual(expected);
+    expect(mockBooksRepository.createBook).toHaveBeenCalledWith(createBookDto);
   });
 
-  // Ajoutez d'autres tests pour update et remove...
+  it('should update a book', async () => {
+    const updateBookDto = {
+      title: 'Updated Book',
+      publicationDate: '2024-11-08',
+      authorId: 1,
+    };
+    const book = new Book();
+    mockBooksRepository.updateBook.mockResolvedValue(book);
+
+    const expected = new BookPresenter(book);
+    expect(await service.update(1, updateBookDto)).toEqual(expected);
+    expect(mockBooksRepository.updateBook).toHaveBeenCalledWith(
+      1,
+      updateBookDto,
+    );
+  });
+
+  it('should delete a book', async () => {
+    mockBooksRepository.deleteBook.mockResolvedValue(undefined);
+
+    await service.remove(1);
+    expect(mockBooksRepository.deleteBook).toHaveBeenCalledWith(1);
+  });
 });
