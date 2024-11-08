@@ -20,7 +20,11 @@ export class BooksService {
     return books.map((book) => new BookPresenter(book)); // Retourner les livres dans le format attendu
   }
   async findOne(id: number): Promise<Book> {
-    return this.booksRepository.findOne({ where: { id } }); // Rechercher par id
+    const book = await this.booksRepository.findOne({ where: { id } });
+    if (!book) {
+      throw new NotFoundException(`Book with id ${id} not found`);
+    }
+    return book;
   }
 
   async create(createBookDto: CreateBookDto): Promise<BookPresenter> {

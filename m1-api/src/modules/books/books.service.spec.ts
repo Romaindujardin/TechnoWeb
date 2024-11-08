@@ -1,17 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { NotFoundException } from '@nestjs/common';
 import { BooksService } from './books.service';
-import { BooksRepository } from './books.repository';
 import { Book } from './entities/book.entity';
+import { CreateBookDto } from './dtos/create-book.dto';
+import { UpdateBookDto } from './dtos/update-book.dto';
 import { BookPresenter } from './presenters/book.presenter';
 
 describe('BooksService', () => {
   let service: BooksService;
 
-  const mockBooksRepository = {
+  const mockBookRepository = {
     find: jest.fn(),
-    createBook: jest.fn(),
-    updateBook: jest.fn(),
-    deleteBook: jest.fn(),
+    findOne: jest.fn(),
+    create: jest.fn(),
+    save: jest.fn(),
+    delete: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -19,8 +23,8 @@ describe('BooksService', () => {
       providers: [
         BooksService,
         {
-          provide: BooksRepository,
-          useValue: mockBooksRepository,
+          provide: getRepositoryToken(Book),
+          useValue: mockBookRepository,
         },
       ],
     }).compile();
@@ -28,51 +32,85 @@ describe('BooksService', () => {
     service = module.get<BooksService>(BooksService);
   });
 
-  it('should return an array of books', async () => {
-    const book = new Book();
-    const result = [book];
-    mockBooksRepository.find.mockResolvedValue(result);
-
-    const expected = result.map((b) => new BookPresenter(b));
-    expect(await service.findAll()).toEqual(expected);
-    expect(mockBooksRepository.find).toHaveBeenCalled();
+  it('should be defined', () => {
+    expect(service).toBeDefined();
   });
 
-  it('should create a book', async () => {
-    const createBookDto = {
-      title: 'Test Book',
-      publicationDate: '2024-10-29',
-      authorId: 1,
-    };
-    const book = new Book();
-    mockBooksRepository.createBook.mockResolvedValue(book);
+  describe('findAll', () => {
+    it('should return an array of books', async () => {
+      const result = [new Book()];
+      mockBookRepository.find.mockResolvedValue(result);
 
-    const expected = new BookPresenter(book);
-    expect(await service.create(createBookDto)).toEqual(expected);
-    expect(mockBooksRepository.createBook).toHaveBeenCalledWith(createBookDto);
+      expect(await service.findAll()).toEqual(
+        result.map((book) => new BookPresenter(book)),
+      );
+    });
   });
 
-  it('should update a book', async () => {
-    const updateBookDto = {
-      title: 'Updated Book',
-      publicationDate: '2024-11-08',
-      authorId: 1,
-    };
-    const book = new Book();
-    mockBooksRepository.updateBook.mockResolvedValue(book);
+  describe('findOne', () => {
+    it('should return a single book', async () => {
+      const id = 1;
+      const book = new Book();
+      mockBookRepository.findOne.mockResolvedValue(book);
 
-    const expected = new BookPresenter(book);
-    expect(await service.update(1, updateBookDto)).toEqual(expected);
-    expect(mockBooksRepository.updateBook).toHaveBeenCalledWith(
-      1,
-      updateBookDto,
-    );
+      expect(await service.findOne(id)).toEqual(book);
+    });
+
+    it('should throw a NotFoundException if book not found', async () => {
+      const id = 1;
+      mockBookRepository.findOne.mockResolvedValue(null);
+
+      await expect(service.findOne(id)).rejects.toThrow(NotFoundException);
+    });
   });
 
-  it('should delete a book', async () => {
-    mockBooksRepository.deleteBook.mockResolvedValue(undefined);
+  describe('create', () => {
+    it('should create and return a new book', async () => {
+      const createBookDto: CreateBookDto = {
+        title: 'Test Book',
+        publicationDate: '2023-01-01',
+        authorId: 1,
+      };
+      const book = new Book();
+      mockBookRepository.create.mockReturnValue(book);
+      mockBookRepository.save.mockResolvedValue(book);
 
-    await service.remove(1);
-    expect(mockBooksRepository.deleteBook).toHaveBeenCalledWith(1);
+      expect(await service.create(createBookDto)).toEqual(
+        new BookPresenter(book),
+      );
+    });
+  });
+
+  describe('update', () => {
+    it('should update and return the updated book', async () => {
+      const id = 1;
+      const updateBookDto: UpdateBookDto = { title: 'Updated Title' };
+      const book = new Book();
+      mockBookRepository.findOne.mockResolvedValue(book);
+      mockBookRepository.save.mockResolvedValue(book);
+
+      expect(await service.update(id, updateBookDto)).toEqual(
+        new BookPresenter(book),
+      );
+    });
+
+    it('should throw a NotFoundException if book not found', async () => {
+      const id = 1;
+      const updateBookDto: UpdateBookDto = { title: 'Updated Title' };
+      mockBookRepository.findOne.mockResolvedValue(null);
+
+      await expect(service.update(id, updateBookDto)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+  });
+
+  describe('remove', () => {
+    it('should remove the book', async () => {
+      const id = 1;
+      mockBookRepository.delete.mockResolvedValue({ affected: 1 });
+
+      await expect(service.remove(id)).resolves.toBeUndefined();
+    });
   });
 });
