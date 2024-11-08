@@ -5,6 +5,8 @@ import { ReviewsService } from './reviews.service';
 import { ReviewPresenter } from './presenters/review.presenter';
 import { Review } from './entities/review.entity';
 import { CreateReviewDto } from './dtos/Create-review.dto';
+import { UpdateReviewDto } from './dtos/Update-review.dto';
+import { CreateReviewModel, UpdateReviewModel } from './models/review.model';
 
 describe('ReviewsController', () => {
   let reviewsController: ReviewsController;
@@ -25,11 +27,16 @@ describe('ReviewsController', () => {
     bookId: 1, // Nécessaire dans CreateReviewDto
   };
 
+  const mockUpdateReviewDto: UpdateReviewDto = {
+    comment: 'Updated comment',
+    stars: 4,
+  };
+
   const mockReviewsService = {
-    create: jest.fn().mockResolvedValue(new ReviewPresenter(mockReview)),
-    findAll: jest.fn().mockResolvedValue([new ReviewPresenter(mockReview)]),
-    findOne: jest.fn().mockResolvedValue(new ReviewPresenter(mockReview)),
-    update: jest.fn().mockResolvedValue(new ReviewPresenter(mockReview)),
+    create: jest.fn().mockResolvedValue(mockReview),
+    findAll: jest.fn().mockResolvedValue([mockReview]),
+    findOne: jest.fn().mockResolvedValue(mockReview),
+    update: jest.fn().mockResolvedValue(mockReview),
     delete: jest.fn().mockResolvedValue(undefined),
   };
 
@@ -50,9 +57,10 @@ describe('ReviewsController', () => {
 
   describe('create', () => {
     it('should create a review and return a ReviewPresenter', async () => {
+      const createReviewModel = new CreateReviewModel(mockCreateReviewDto);
       const result = await reviewsController.create(mockCreateReviewDto); // Utilisez mockCreateReviewDto ici
       expect(result).toEqual(new ReviewPresenter(mockReview));
-      expect(reviewsService.create).toHaveBeenCalledWith(mockCreateReviewDto);
+      expect(reviewsService.create).toHaveBeenCalledWith(createReviewModel); // Assurez-vous qu'on passe le modèle
     });
   });
 
@@ -74,12 +82,10 @@ describe('ReviewsController', () => {
 
   describe('update', () => {
     it('should update a review and return a ReviewPresenter', async () => {
-      const result = await reviewsController.update(1, mockCreateReviewDto); // Utilisez mockCreateReviewDto ici pour l'update
+      const updateReviewModel = new UpdateReviewModel(mockUpdateReviewDto);
+      const result = await reviewsController.update(1, mockUpdateReviewDto); // Utilisez mockUpdateReviewDto ici pour l'update
       expect(result).toEqual(new ReviewPresenter(mockReview));
-      expect(reviewsService.update).toHaveBeenCalledWith(
-        1,
-        mockCreateReviewDto,
-      );
+      expect(reviewsService.update).toHaveBeenCalledWith(1, updateReviewModel); // Passez le modèle pour l'update
     });
   });
 

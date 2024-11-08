@@ -1,10 +1,10 @@
 // src/modules/review/reviews.repository.ts
+
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Review } from './entities/review.entity';
-import { CreateReviewDto } from './dtos/Create-review.dto';
-import { UpdateReviewDto } from './dtos/Update-review.dto';
+import { CreateReviewModel, UpdateReviewModel } from './models/review.model'; // Import des modèles
 
 @Injectable()
 export class ReviewsRepository {
@@ -13,13 +13,13 @@ export class ReviewsRepository {
     private readonly repository: Repository<Review>,
   ) {}
 
-  create(createReviewDto: CreateReviewDto): Promise<Review> {
-    const review = this.repository.create(createReviewDto);
+  create(createReviewModel: CreateReviewModel): Promise<Review> {
+    const review = this.repository.create(createReviewModel);
     return this.repository.save(review);
   }
 
   findAllReviews(): Promise<Review[]> {
-    return this.repository.find({ relations: ['book'] }); // Utilisation correcte ici
+    return this.repository.find({ relations: ['book'] });
   }
 
   findOneReview(id: number): Promise<Review> {
@@ -28,9 +28,9 @@ export class ReviewsRepository {
 
   async updateReview(
     id: number,
-    updateReviewDto: UpdateReviewDto,
+    updateReviewModel: UpdateReviewModel,
   ): Promise<Review> {
-    await this.repository.update(id, updateReviewDto);
+    await this.repository.update(id, updateReviewModel);
     return this.findOneReview(id);
   }
 
