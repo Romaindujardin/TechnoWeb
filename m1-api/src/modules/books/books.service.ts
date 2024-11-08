@@ -1,40 +1,39 @@
-// src/modules/books/books.service.ts
-
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateBookDto } from './dtos/create-book.dto';
 import { UpdateBookDto } from './dtos/update-book.dto';
-import { BookPresenter } from './presenters/book.presenter';
-import { BooksRepository } from './books.repository';
+import { Book } from './entities/book.entity';
+import { BookPresenter } from './presenters/book.presenter'; // Importez BookPresenter
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class BooksService {
-  constructor(private readonly booksRepository: BooksRepository) {}
+  constructor(
+    @InjectRepository(Book)
+    private readonly bookRepository: Repository<Book>,
+  ) {}
 
   async findAll(): Promise<BookPresenter[]> {
-    const books = await this.booksRepository.findAllBooks();
-    return books.map((book) => new BookPresenter(book));
+    const books = await this.bookRepository.find();
+    return books.map((book) => new BookPresenter(book)); // Convertir Book en BookPresenter
   }
 
   async create(createBookDto: CreateBookDto): Promise<BookPresenter> {
-    const book = await this.booksRepository.createBook(createBookDto);
-    return new BookPresenter(book);
+    const book = this.bookRepository.create(createBookDto);
+    await this.bookRepository.save(book);
+    return new BookPresenter(book); // Convertir Book en BookPresenter
   }
 
   async update(
     id: number,
     updateBookDto: UpdateBookDto,
   ): Promise<BookPresenter> {
-    const updatedBook = await this.booksRepository.updateBook(
-      id,
-      updateBookDto,
-    );
-    if (!updatedBook) {
-      throw new NotFoundException(`Book with ID ${id} not found`);
-    }
-    return new BookPresenter(updatedBook);
+    await this.bookRepository.update(id, updateBookDto);
+    const updatedBook = await this.bookRepository.findOne({ where: { id } });
+    return new BookPresenter(updatedBook); // Convertir Book en BookPresenter
   }
 
   async remove(id: number): Promise<void> {
-    await this.booksRepository.deleteBook(id);
+    await this.bookRepository.delete(id);
   }
 }
