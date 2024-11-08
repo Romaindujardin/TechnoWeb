@@ -2,13 +2,13 @@
 import { IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 
 export class UpdateReviewDto {
-    @IsInt()
-    @Min(1)
-    @Max(5)
-    @IsOptional()
-    stars?: number;
+  @IsInt()
+  @Min(1)
+  @Max(5)
+  @IsOptional()
+  stars?: number;
 
-    @IsString()
-    @IsOptional()
-    comment?: string;
+  @IsString()
+  @IsOptional()
+  comment?: string;
 }

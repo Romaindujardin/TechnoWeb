@@ -1,4 +1,5 @@
 // src/modules/review/reviews.controller.ts
+
 import {
   Controller,
   Get,
@@ -11,7 +12,8 @@ import {
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dtos/Create-review.dto';
 import { UpdateReviewDto } from './dtos/Update-review.dto';
-import { ReviewPresenter } from './presenters/review.presenter'; // Import du presenter
+import { ReviewPresenter } from './presenters/review.presenter';
+import { CreateReviewModel, UpdateReviewModel } from './models/review.model';
 
 @Controller('reviews')
 export class ReviewsController {
@@ -21,20 +23,21 @@ export class ReviewsController {
   async create(
     @Body() createReviewDto: CreateReviewDto,
   ): Promise<ReviewPresenter> {
-    const review = await this.reviewsService.create(createReviewDto);
-    return new ReviewPresenter(review); // Retourne le presenter
+    const createReviewModel = new CreateReviewModel(createReviewDto); // Conversion en modèle
+    const review = await this.reviewsService.create(createReviewModel);
+    return new ReviewPresenter(review);
   }
 
   @Get()
   async findAll(): Promise<ReviewPresenter[]> {
     const reviews = await this.reviewsService.findAll();
-    return reviews.map((review) => new ReviewPresenter(review)); // Transformation de chaque review avec le presenter
+    return reviews.map((review) => new ReviewPresenter(review));
   }
 
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<ReviewPresenter> {
     const review = await this.reviewsService.findOne(id);
-    return new ReviewPresenter(review); // Transformation en presenter
+    return new ReviewPresenter(review);
   }
 
   @Put(':id')
@@ -42,8 +45,9 @@ export class ReviewsController {
     @Param('id') id: number,
     @Body() updateReviewDto: UpdateReviewDto,
   ): Promise<ReviewPresenter> {
-    const review = await this.reviewsService.update(id, updateReviewDto);
-    return new ReviewPresenter(review); // Transformation en presenter
+    const updateReviewModel = new UpdateReviewModel(updateReviewDto); // Conversion en modèle
+    const review = await this.reviewsService.update(id, updateReviewModel);
+    return new ReviewPresenter(review);
   }
 
   @Delete(':id')
