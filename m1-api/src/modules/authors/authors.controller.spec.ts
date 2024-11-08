@@ -38,13 +38,13 @@ describe('AuthorsController', () => {
   });
 
   it('should create an author', async () => {
-    const createAuthorDto = {
+    const AuthorCreateModel = {
       name: 'Author Test',
       photo: 'photo_url',
       biography: 'Sample biography',
     };
-    expect(await controller.create(createAuthorDto)).toEqual(authorPresenter);
-    expect(mockAuthorsService.create).toHaveBeenCalledWith(createAuthorDto);
+    expect(await controller.create(AuthorCreateModel)).toEqual(authorPresenter);
+    expect(mockAuthorsService.create).toHaveBeenCalledWith(AuthorCreateModel);
   });
 
   it('should retrieve all authors', async () => {

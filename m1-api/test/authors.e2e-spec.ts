@@ -22,7 +22,11 @@ describe('AuthorsController (e2e)', () => {
   it('/authors (POST)', () => {
     return request(app.getHttpServer())
       .post('/authors')
-      .send({ name: 'John Doe', photo: 'photo_url', biography: 'Biography text' })
+      .send({
+        name: 'John Doe',
+        photo: 'photo_url',
+        biography: 'Biography text',
+      })
       .expect(201)
       .then((response) => {
         expect(response.body.name).toBe('John Doe');
@@ -41,9 +45,11 @@ describe('AuthorsController (e2e)', () => {
   });
 
   it('/authors/:id (GET)', async () => {
-    const author = await request(app.getHttpServer())
-      .post('/authors')
-      .send({ name: 'Jane Doe', photo: 'photo_url_2', biography: 'Another biography' });
+    const author = await request(app.getHttpServer()).post('/authors').send({
+      name: 'Jane Doe',
+      photo: 'photo_url_2',
+      biography: 'Another biography',
+    });
 
     return request(app.getHttpServer())
       .get(`/authors/${author.body.id}`)
@@ -56,9 +62,11 @@ describe('AuthorsController (e2e)', () => {
   });
 
   it('/authors/:id (PATCH)', async () => {
-    const author = await request(app.getHttpServer())
-      .post('/authors')
-      .send({ name: 'Initial Name', photo: 'initial_photo', biography: 'Initial biography' });
+    const author = await request(app.getHttpServer()).post('/authors').send({
+      name: 'Initial Name',
+      photo: 'initial_photo',
+      biography: 'Initial biography',
+    });
 
     return request(app.getHttpServer())
       .patch(`/authors/${author.body.id}`)
@@ -71,9 +79,11 @@ describe('AuthorsController (e2e)', () => {
   });
 
   it('/authors/:id (DELETE)', async () => {
-    const author = await request(app.getHttpServer())
-      .post('/authors')
-      .send({ name: 'Delete Me', photo: 'photo_to_delete', biography: 'Biography to delete' });
+    const author = await request(app.getHttpServer()).post('/authors').send({
+      name: 'Delete Me',
+      photo: 'photo_to_delete',
+      biography: 'Biography to delete',
+    });
 
     return request(app.getHttpServer())
       .delete(`/authors/${author.body.id}`)

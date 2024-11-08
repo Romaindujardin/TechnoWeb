@@ -1,11 +1,12 @@
-// modules/authors/authors.service.ts
+// src/modules/authors/authors.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Author } from './entities/author.entity';
-import { CreateAuthorDto } from './dtos/create-author.dto';
+import { AuthorModel } from './models/author.model';
+import { AuthorPresenter } from './presenters/author.presenter';
 import { UpdateAuthorDto } from './dtos/update-author.dto';
-import { AuthorPresenter } from './presenters/author.presenter'; // Assurez-vous d'importer le Presenter
+import { CreateAuthorDto } from './dtos/create-author.dto';
 
 @Injectable()
 export class AuthorsService {
@@ -15,9 +16,10 @@ export class AuthorsService {
   ) {}
 
   async create(createAuthorDto: CreateAuthorDto): Promise<AuthorPresenter> {
-    const author = this.authorsRepository.create(createAuthorDto);
+    const authorData = new AuthorModel(createAuthorDto); // Transformation en modèle
+    const author = this.authorsRepository.create(authorData);
     await this.authorsRepository.save(author);
-    return new AuthorPresenter(author); // Retourner un AuthorPresenter
+    return new AuthorPresenter(author);
   }
 
   async findAll(): Promise<AuthorPresenter[]> {
@@ -37,8 +39,9 @@ export class AuthorsService {
     id: number,
     updateAuthorDto: UpdateAuthorDto,
   ): Promise<AuthorPresenter> {
-    await this.authorsRepository.update(id, updateAuthorDto);
-    return this.findOne(id); // La méthode findOne retournera déjà un AuthorPresenter
+    const authorData = new AuthorModel(updateAuthorDto); // Transformation en modèle
+    await this.authorsRepository.update(id, authorData);
+    return this.findOne(id);
   }
 
   async remove(id: number): Promise<void> {
