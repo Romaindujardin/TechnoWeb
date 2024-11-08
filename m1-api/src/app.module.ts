@@ -8,7 +8,6 @@ import { AuthorsModule } from './modules/authors/authors.module'; // Import du m
 import { Review } from './modules/review/entities/review.entity';
 import { ReviewsModule } from './modules/review/reviews.module';
 
-
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -20,8 +19,7 @@ import { ReviewsModule } from './modules/review/reviews.module';
     DatabaseModule,
     BooksModule,
     AuthorsModule, // Ajout du module ici
-    ReviewsModule
-    
+    ReviewsModule,
   ],
   controllers: [AppController], // Ajoutez le contrôleur ici
   providers: [AppService],
