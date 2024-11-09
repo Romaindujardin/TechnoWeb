@@ -61,7 +61,7 @@ describe('AuthorsController (e2e)', () => {
       });
   });
 
-  it('/authors/:id (PATCH)', async () => {
+  it('/authors/:id (PUT)', async () => {
     const author = await request(app.getHttpServer()).post('/authors').send({
       name: 'Initial Name',
       photo: 'initial_photo',
@@ -69,7 +69,7 @@ describe('AuthorsController (e2e)', () => {
     });
 
     return request(app.getHttpServer())
-      .patch(`/authors/${author.body.id}`)
+      .put(`/authors/${author.body.id}`)
       .send({ name: 'Updated Name' })
       .expect(200)
       .then((response) => {
