@@ -5,6 +5,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
+  JoinColumn,
 } from 'typeorm';
 import { Author } from '../../authors/entities/author.entity';
 import { Review } from '../../review/entities/review.entity';
@@ -24,6 +25,7 @@ export class Book {
   price: number;
 
   @ManyToOne(() => Author, (author) => author.books, { eager: true })
+  @JoinColumn({ name: 'authorId' })
   author: Author;
 
   // Ajout de la relation avec Review

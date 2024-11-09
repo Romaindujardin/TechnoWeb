@@ -13,5 +13,5 @@ export class UpdateBookDto {
   price?: number;
 
   @IsOptional()
-  authorId?: number;
+  authorId: number;
 }
