@@ -5,7 +5,7 @@ import {
   Post,
   Body,
   Param,
-  Patch,
+  Put,
   Delete,
 } from '@nestjs/common';
 import { AuthorsService } from './authors.service';
@@ -34,12 +34,12 @@ export class AuthorsController {
     return this.authorsService.findOne(+id); // Le service retourne déjà AuthorPresenter
   }
 
-  @Patch(':id')
+  @Put(':id')
   async update(
     @Param('id') id: string,
     @Body() updateAuthorDto: UpdateAuthorDto,
   ): Promise<AuthorPresenter> {
-    return this.authorsService.update(+id, updateAuthorDto); // Le service retourne déjà AuthorPresenter
+    return this.authorsService.update(+id, updateAuthorDto);
   }
 
   @Delete(':id')
