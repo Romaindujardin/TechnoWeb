@@ -10,7 +10,7 @@ export class BookModel {
     this.id = data.id ?? 0;
     this.title = data.title ?? '';
     this.publicationDate = data.publicationDate ?? '';
-    this.price = data.price;
+    this.price = data.price ?? 0;
     this.authorId = data.authorId ?? 0;
   }
 }

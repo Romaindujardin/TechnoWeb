@@ -1,9 +1,4 @@
-import {
-  IsString,
-  IsDateString,
-  IsNotEmpty,
-  IsOptional,
-} from 'class-validator';
+import { IsString, IsDateString, IsNotEmpty, IsInt } from 'class-validator';
 
 export class CreateBookDto {
   @IsString()
@@ -13,8 +8,9 @@ export class CreateBookDto {
   @IsDateString()
   publicationDate: string;
 
-  @IsOptional()
-  price?: number;
+  @IsInt()
+  @IsNotEmpty()
+  price: number;
 
   @IsNotEmpty()
   authorId: number;

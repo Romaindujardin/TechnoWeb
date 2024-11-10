@@ -1,20 +1,35 @@
 // src/modules/review/reviews.repository.ts
 
 import { Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Review } from './entities/review.entity';
 import { CreateReviewModel, UpdateReviewModel } from './models/review.model'; // Import des modèles
+import { Book } from '../books/entities/book.entity';
 
 @Injectable()
 export class ReviewsRepository {
   constructor(
     @InjectRepository(Review)
     private readonly repository: Repository<Review>,
+    @InjectRepository(Book)
+    private readonly bookRepository: Repository<Book>,
   ) {}
 
-  create(createReviewModel: CreateReviewModel): Promise<Review> {
-    const review = this.repository.create(createReviewModel);
+  async create(createReviewModel: CreateReviewModel): Promise<Review> {
+    // 1. Vérifiez si le Book existe
+    const book = await this.bookRepository.findOne({
+      where: { id: createReviewModel.bookId },
+    });
+    if (!book) {
+      throw new NotFoundException('Book not found');
+    }
+
+    // 2. Créez la Review en liant le Book trouvé
+    const review = this.repository.create({
+      ...createReviewModel,
+      book,
+    });
     return this.repository.save(review);
   }
 

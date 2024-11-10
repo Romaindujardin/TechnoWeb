@@ -10,7 +10,7 @@ export class UpdateBookDto {
   publicationDate?: string;
 
   @IsOptional()
-  price?: number;
+  price: number;
 
   @IsOptional()
   authorId: number;

@@ -21,7 +21,7 @@ export class Book {
   @Column({ type: 'date' })
   publicationDate: string;
 
-  @Column({ type: 'decimal', nullable: true })
+  @Column({ type: 'decimal' })
   price: number;
 
   @ManyToOne(() => Author, (author) => author.books, { eager: true })

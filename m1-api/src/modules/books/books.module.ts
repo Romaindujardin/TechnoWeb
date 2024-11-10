@@ -15,6 +15,6 @@ import { AuthorsModule } from '../authors/authors.module'; // Import du module A
   ],
   controllers: [BooksController],
   providers: [BooksService],
-  exports: [BooksService],
+  exports: [BooksService, TypeOrmModule],
 })
 export class BooksModule {}

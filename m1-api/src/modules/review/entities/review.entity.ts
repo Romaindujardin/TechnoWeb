@@ -26,6 +26,9 @@ export class Review {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @Column({ type: 'int' })
+  bookId: number; // Ajout de l'id du livre pour faciliter les requêtes
+
   @ManyToOne(() => Book, (book) => book.reviews, { onDelete: 'CASCADE' })
   book: Book;
 }
