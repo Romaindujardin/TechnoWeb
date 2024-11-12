@@ -1,62 +1,149 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';  // Pour appeler l'API
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+import Navbar from "../components/Navbar";
+import Breadcrumb from "../components/Breadcrumb";
 
-const AuthorDetailsPage = ({ match }) => {
-  const [author, setAuthor] = useState(null); // Contient les données de l'auteur
-  const [books, setBooks] = useState([]); // Contient la liste des livres
-  const authorId = match.params.id; // Récupère l'id de l'auteur depuis l'URL
+const AuthorDetailsPage = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [author, setAuthor] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [updatedAuthor, setUpdatedAuthor] = useState({ name: "", photoUrl: "", biography: "" });
 
   useEffect(() => {
-    // Appel à l'API pour récupérer l'auteur et ses livres
     const fetchAuthorDetails = async () => {
       try {
-        const authorResponse = await axios.get(`/api/authors/${authorId}`);
-        setAuthor(authorResponse.data);
-
-        const booksResponse = await axios.get(`/api/books?authorId=${authorId}`);
-        setBooks(booksResponse.data);
+        const response = await axios.get(`http://127.0.0.1:3001/authors/${id}`);
+        setAuthor(response.data);
+        setUpdatedAuthor(response.data);
+        setLoading(false);
       } catch (error) {
-        console.error('Erreur lors de la récupération des données de l\'auteur', error);
+        console.error("Erreur lors de la récupération des détails de l'auteur:", error);
+        setLoading(false);
       }
     };
-
     fetchAuthorDetails();
-  }, [authorId]); // Récupérer les données quand l'ID de l'auteur change
+  }, [id]);
 
-  if (!author) return <div>Chargement...</div>; // Affichage pendant le chargement
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUpdatedAuthor((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.put(`http://127.0.0.1:3001/authors/${id}`, updatedAuthor);
+      setAuthor(updatedAuthor);
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour de l'auteur:", error);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm("Voulez-vous vraiment supprimer cet auteur ?")) {
+      try {
+        await axios.delete(`http://127.0.0.1:3001/authors/${id}`);
+        alert("Auteur supprimé avec succès.");
+        navigate("/authors"); // Redirection vers la page des auteurs après suppression
+      } catch (error) {
+        console.error("Erreur lors de la suppression de l'auteur:", error);
+      }
+    }
+  };
+
+  if (loading) {
+    return <div>Chargement...</div>;
+  }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col md:flex-row items-center">
-        {/* Image de l'auteur */}
-        <div className="w-full md:w-1/3 mb-6 md:mb-0">
-          <img
-            src={author.photoUrl}
-            alt={author.name}
-            className="w-full h-auto rounded-lg shadow-lg object-cover"
-          />
-        </div>
-        {/* Infos de l'auteur */}
-        <div className="w-full md:w-2/3 md:pl-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-4">{author.name}</h1>
-          <p className="text-lg text-gray-600 mb-6">{author.bio}</p>
-        </div>
-      </div>
-
-      {/* Liste des livres de l'auteur */}
-      <div className="mt-8">
-        <h2 className="text-3xl font-semibold text-gray-800 mb-4">Livres de {author.name}</h2>
-        <ul className="list-disc pl-6 space-y-2">
-          {books.length === 0 ? (
-            <li>Aucun livre trouvé.</li>
-          ) : (
-            books.map((book) => (
-              <li key={book.id} className="text-lg text-gray-700">
-                {book.title} ({book.publicationDate})
-              </li>
-            ))
-          )}
-        </ul>
+    <div className="min-h-screen bg-gray-100">
+      <Navbar />
+      <Breadcrumb />
+      <div className="max-w-4xl mx-auto p-6">
+        {author ? (
+          <div className="flex items-center bg-white rounded-lg shadow-lg p-6">
+            {!isEditing ? (
+              <>
+                <div className="w-32 h-32 flex-shrink-0">
+                  <img
+                    src={author.photoUrl || "https://via.placeholder.com/150"}
+                    alt={author.name}
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                </div>
+                <div className="pl-6 flex-grow">
+                  <h1 className="text-3xl font-semibold mb-4">{author.name}</h1>
+                  <p className="text-gray-700">{author.biography || "Aucune biographie disponible."}</p>
+                </div>
+                <div className="flex flex-col items-end space-y-2 ml-4">
+                  <button
+                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    Modifier l'auteur
+                  </button>
+                  <button
+                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                    onClick={handleDelete}
+                  >
+                    Supprimer l'auteur
+                  </button>
+                </div>
+              </>
+            ) : (
+              <form onSubmit={handleSubmit} className="w-full max-w-md mt-4">
+                <div className="mb-4">
+                  <label className="block text-gray-700">Nom</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={updatedAuthor.name}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border rounded"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">URL de la Photo</label>
+                  <input
+                    type="text"
+                    name="photoUrl"
+                    value={updatedAuthor.photoUrl}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border rounded"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Biographie</label>
+                  <textarea
+                    name="biography"
+                    value={updatedAuthor.biography}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border rounded"
+                  ></textarea>
+                </div>
+                <button
+                  type="submit"
+                  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mr-2"
+                >
+                  Enregistrer
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(false)}
+                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                >
+                  Annuler
+                </button>
+              </form>
+            )}
+          </div>
+        ) : (
+          <p>Auteur non trouvé.</p>
+        )}
       </div>
     </div>
   );
