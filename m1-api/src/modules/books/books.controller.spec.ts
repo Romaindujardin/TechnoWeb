@@ -49,6 +49,7 @@ describe('BooksController', () => {
     const createBookDto: CreateBookDto = {
       title: 'Test Book',
       publicationDate: '2024-10-29',
+      price: 20, // Add the price property
       authorId: 1, // Conservez authorId ici pour le DTO
     };
     const book = new Book();
