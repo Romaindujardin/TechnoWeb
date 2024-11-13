@@ -90,7 +90,7 @@ const BooksPage = () => {
 
       {/* Titre et bouton d'ajout */}
       <div className="flex justify-between items-center px-4 mt-6">
-        <h1 className="text-2xl font-bold text-center w-full">Liste des livres</h1>
+        <h1 className="text-2xl font-bold text-center w-full">Bibliothèque</h1>
         <button
           onClick={() => setIsModalOpen(true)}
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300 shadow"
