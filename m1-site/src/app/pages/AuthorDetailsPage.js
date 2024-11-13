@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+// src/app/pages/AuthorDetailsPage.js
+import React, { useEffect, useState } from "react"; 
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../components/Navbar";
@@ -49,7 +50,6 @@ const AuthorDetailsPage = () => {
       console.error("Erreur lors de la mise à jour de l'auteur:", error);
     }
   };
-  
 
   const handleDelete = async () => {
     if (window.confirm("Voulez-vous vraiment supprimer cet auteur ?")) {
@@ -154,7 +154,7 @@ const AuthorDetailsPage = () => {
         )}
 
         {/* Liste des livres de l'auteur */}
-                <div className="mt-8">
+        <div className="mt-8">
           <h2 className="text-2xl font-semibold mb-4">Livres de {author.name}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {books.length > 0 ? (
@@ -164,16 +164,25 @@ const AuthorDetailsPage = () => {
                   <div key={book.id} className="bg-white p-4 rounded-lg shadow-lg">
                     <h3 className="text-xl font-semibold">{book.title}</h3>
                     <p className="text-gray-600">Description : {book.description || "Pas de description."}</p>
-                    {/* Vous pouvez afficher d'autres informations sur le livre ici */}
                   </div>
                 ))
             ) : (
               <p>Aucun livre trouvé pour cet auteur.</p>
             )}
           </div>
-        </div>          </div>
         </div>
-    
+
+        {/* Bouton de retour */}
+        <div className="flex justify-center mt-6">
+          <button
+            onClick={() => navigate(-1)}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
+          >
+            Retour
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -1,26 +1,18 @@
 // src/app/pages/BookDetailPage.js
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 
 const BookDetailPage = () => {
   const { id } = useParams(); // Récupère l'ID du livre depuis l'URL
   const [book, setBook] = useState(null);
-  const [author, setAuthor] = useState(null); // Nouvel état pour les informations de l'auteur
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fonction pour récupérer les détails du livre
     const fetchBookDetails = async () => {
       try {
         const response = await axios.get(`http://127.0.0.1:3001/books/${id}`);
         setBook(response.data);
-
-        // Appel API pour récupérer les informations de l'auteur
-        if (response.data.authorId) {
-          const authorResponse = await axios.get(`http://127.0.0.1:3001/authors/${response.data.authorId}`);
-          setAuthor(authorResponse.data);
-        }
       } catch (error) {
         console.error("Erreur lors de la récupération des détails du livre :", error);
         setError("Impossible de charger les détails du livre. Veuillez réessayer.");
@@ -46,9 +38,19 @@ const BookDetailPage = () => {
         <p className="text-gray-600 mb-2">
           <strong>Année de publication :</strong> {publicationYear}
         </p>
+        
+        {/* Lien vers la page de l'auteur */}
         <p className="text-gray-600 mb-2">
-          <strong>Auteur :</strong> {author ? author.name : "Non spécifié"}
+          <strong>Auteur :</strong>{" "}
+          {book.author ? (
+            <Link to={`/author/${book.author.id}`} className="text-blue-500 hover:underline">
+              {book.author.name}
+            </Link>
+          ) : (
+            "Non spécifié"
+          )}
         </p>
+
         <button
           onClick={() => window.history.back()}
           className="mt-4 w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition duration-300"
