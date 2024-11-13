@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import BooksPage from "./pages/BooksPage";
+import BookDetailPage from "./pages/BookDetailPage"; // Importer la page de détails du livre
 import AuthorsPage from "./pages/AuthorsPage";
 import AuthorDetailsPage from "./pages/AuthorDetailsPage"; // Importer la page de détails de l'auteur
 
@@ -18,8 +19,9 @@ const App = () => {
           
           {/* Route pour la liste des auteurs */}
           <Route path="/authors" element={<AuthorsPage />} />
-
           
+          {/* Route pour les détails d'un livre avec un id dynamique */}
+          <Route path="/books/:id" element={<BookDetailPage />} />
           
           {/* Route pour les détails d'un auteur avec un id dynamique */}
           <Route path="/author/:id" element={<AuthorDetailsPage />} />
