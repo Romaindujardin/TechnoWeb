@@ -27,9 +27,15 @@ export class BooksController {
     return this.booksService.findOne(id);
   }
 
+  @Get('author/:authorId')
+  async getBooksByAuthor(
+    @Param('authorId') authorId: string, // Paramètre de l'ID de l'auteur
+  ): Promise<Book[]> {
+    return this.booksService.getBooksByAuthor(authorId); // Appel du service pour récupérer les livres par auteur
+  }
+
   @Post()
   async create(@Body() createBookDto: CreateBookDto): Promise<BookPresenter> {
-    // Spécifiez le type de retour
     return this.booksService.create(createBookDto);
   }
 
@@ -38,13 +44,11 @@ export class BooksController {
     @Param('id') id: number,
     @Body() updateBookDto: UpdateBookDto,
   ): Promise<BookPresenter> {
-    // Spécifiez le type de retour
     return this.booksService.update(id, updateBookDto);
   }
 
   @Delete(':id')
   async remove(@Param('id') id: number): Promise<void> {
-    // Spécifiez le type de retour
     return this.booksService.remove(id);
   }
 }
