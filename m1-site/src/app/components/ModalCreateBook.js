@@ -1,30 +1,7 @@
 // src/app/components/ModalCreateBook.js
-import React, { useState } from "react";
-import axios from "axios";
+import React from "react";
 
-const ModalCreateBook = ({ isOpen, onClose, onBookAdded }) => {
-  const [newBook, setNewBook] = useState({
-    title: "",
-    publicationDate: "",
-    authorId: ""
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setNewBook((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const addBook = async () => {
-    try {
-      await axios.post("http://127.0.0.1:3001/books", newBook);
-      onBookAdded(); // Callback pour rafraîchir la liste des livres
-      setNewBook({ title: "", publicationDate: "", authorId: "" }); // Réinitialisation du formulaire
-      onClose(); // Fermer la modale
-    } catch (error) {
-      console.error("Erreur lors de l'ajout du livre :", error);
-    }
-  };
-
+const ModalCreateBook = ({ isOpen, onClose, newBook, handleChange, addBook }) => {
   if (!isOpen) return null;
 
   return (
@@ -40,7 +17,7 @@ const ModalCreateBook = ({ isOpen, onClose, onBookAdded }) => {
         <input
           type="text"
           name="title"
-          placeholder="Titre du livre"
+          placeholder="Titre"
           value={newBook.title}
           onChange={handleChange}
           className="w-full p-2 mb-2 border border-gray-300 rounded"
@@ -54,9 +31,17 @@ const ModalCreateBook = ({ isOpen, onClose, onBookAdded }) => {
           className="w-full p-2 mb-2 border border-gray-300 rounded"
         />
         <input
+          type="number"
+          name="price"
+          placeholder="Prix"
+          value={newBook.price}
+          onChange={handleChange}
+          className="w-full p-2 mb-2 border border-gray-300 rounded"
+        />
+        <input
           type="text"
           name="authorId"
-          placeholder="Auteur ID"
+          placeholder="ID de l'auteur"
           value={newBook.authorId}
           onChange={handleChange}
           className="w-full p-2 mb-2 border border-gray-300 rounded"
