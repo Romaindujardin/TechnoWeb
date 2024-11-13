@@ -70,6 +70,7 @@ describe('BooksService', () => {
         title: 'Test Book',
         publicationDate: '2023-01-01',
         authorId: 1,
+        price: 100,
       };
       const book = new Book();
       mockBookRepository.create.mockReturnValue(book);
@@ -84,7 +85,7 @@ describe('BooksService', () => {
   describe('update', () => {
     it('should update and return the updated book', async () => {
       const id = 1;
-      const updateBookDto: UpdateBookDto = { title: 'Updated Title' };
+      const updateBookDto: UpdateBookDto = { title: 'Updated Title', price: 100, authorId: 1 };
       const book = new Book();
       mockBookRepository.findOne.mockResolvedValue(book);
       mockBookRepository.save.mockResolvedValue(book);
@@ -96,7 +97,7 @@ describe('BooksService', () => {
 
     it('should throw a NotFoundException if book not found', async () => {
       const id = 1;
-      const updateBookDto: UpdateBookDto = { title: 'Updated Title' };
+      const updateBookDto: UpdateBookDto = { title: 'Updated Title', price: 100, authorId: 1 };
       mockBookRepository.findOne.mockResolvedValue(null);
 
       await expect(service.update(id, updateBookDto)).rejects.toThrow(

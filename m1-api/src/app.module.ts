@@ -1,29 +1,29 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BooksModule } from './modules/books/books.module';
-import { DatabaseModule } from './modules/database/database.module'; // Votre module de base de données
-import { AppController } from './app.controller'; // Assurez-vous que le bon contrôleur est importé
-import { AppService } from './app.service'; // Assurez-vous que le bon contrôleur est importé
-import { AuthorsModule } from './modules/authors/authors.module'; // Import du module
-import { Review } from './modules/review/entities/review.entity';
+import { DatabaseModule } from './modules/database/database.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { AuthorsModule } from './modules/authors/authors.module';
 import { ReviewsModule } from './modules/review/reviews.module';
-
+import { Book } from './modules/books/entities/book.entity'; // Import direct des entités
+import { Author } from './modules/authors/entities/author.entity';
+import { Review } from './modules/review/entities/review.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'sqlite',
-      database: 'db', // Chemin vers votre base de données SQLite
-      entities: [__dirname + '/modules/**/*.entity{.ts,.js}'], // Inclut toutes les entités
-      synchronize: true, // En développement, synchronisez automatiquement
+      database: 'db', // Chemin vers ta base de données SQLite
+      entities: [Book, Author, Review], // Import direct des entités
+      synchronize: true,
     }),
     DatabaseModule,
     BooksModule,
-    AuthorsModule, // Ajout du module ici
-    ReviewsModule
-    
+    AuthorsModule,
+    ReviewsModule,
   ],
-  controllers: [AppController], // Ajoutez le contrôleur ici
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}

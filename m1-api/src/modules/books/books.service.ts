@@ -1,5 +1,3 @@
-// src/modules/books/books.service.ts
-
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateBookDto } from './dtos/create-book.dto';
@@ -81,5 +79,13 @@ export class BooksService {
 
   async remove(id: number): Promise<void> {
     await this.booksRepository.delete(id);
+  }
+
+  // Ajouter la méthode getBooksByAuthor
+  async getBooksByAuthor(authorId: string): Promise<Book[]> {
+    return this.booksRepository.find({
+      where: { author: { id: Number(authorId) } }, // Filtrer les livres par l'ID de l'auteur
+      relations: ['author'], // Assurer que la relation 'author' est bien incluse
+    });
   }
 }

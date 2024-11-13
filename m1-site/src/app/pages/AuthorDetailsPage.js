@@ -8,6 +8,7 @@ const AuthorDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [author, setAuthor] = useState(null);
+  const [books, setBooks] = useState([]); // État pour les livres de l'auteur
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [updatedAuthor, setUpdatedAuthor] = useState({ name: "", photoUrl: "", biography: "" });
@@ -15,15 +16,21 @@ const AuthorDetailsPage = () => {
   useEffect(() => {
     const fetchAuthorDetails = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:3001/authors/${id}`);
-        setAuthor(response.data);
-        setUpdatedAuthor(response.data);
+        const authorResponse = await axios.get(`http://127.0.0.1:3001/authors/${id}`);
+        setAuthor(authorResponse.data);
+        setUpdatedAuthor(authorResponse.data);
+        
+        // Récupérer les livres de l'auteur
+        const booksResponse = await axios.get(`http://127.0.0.1:3001/books?author_id=${id}`);
+        setBooks(booksResponse.data); // Mettre à jour l'état des livres
+
         setLoading(false);
       } catch (error) {
         console.error("Erreur lors de la récupération des détails de l'auteur:", error);
         setLoading(false);
       }
     };
+
     fetchAuthorDetails();
   }, [id]);
 
@@ -42,6 +49,7 @@ const AuthorDetailsPage = () => {
       console.error("Erreur lors de la mise à jour de l'auteur:", error);
     }
   };
+  
 
   const handleDelete = async () => {
     if (window.confirm("Voulez-vous vraiment supprimer cet auteur ?")) {
@@ -144,8 +152,28 @@ const AuthorDetailsPage = () => {
         ) : (
           <p>Auteur non trouvé.</p>
         )}
-      </div>
-    </div>
+
+        {/* Liste des livres de l'auteur */}
+                <div className="mt-8">
+          <h2 className="text-2xl font-semibold mb-4">Livres de {author.name}</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {books.length > 0 ? (
+              books
+                .filter((book) => book.authorId === author.id)
+                .map((book) => (
+                  <div key={book.id} className="bg-white p-4 rounded-lg shadow-lg">
+                    <h3 className="text-xl font-semibold">{book.title}</h3>
+                    <p className="text-gray-600">Description : {book.description || "Pas de description."}</p>
+                    {/* Vous pouvez afficher d'autres informations sur le livre ici */}
+                  </div>
+                ))
+            ) : (
+              <p>Aucun livre trouvé pour cet auteur.</p>
+            )}
+          </div>
+        </div>          </div>
+        </div>
+    
   );
 };
 
