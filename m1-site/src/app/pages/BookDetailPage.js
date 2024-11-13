@@ -1,12 +1,15 @@
 // src/app/pages/BookDetailPage.js
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+import ModalDeleteBook from "../components/ModalDeleteBook"; // Import de la modal de suppression
 
 const BookDetailPage = () => {
-  const { id } = useParams(); // Récupère l'ID du livre depuis l'URL
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [book, setBook] = useState(null);
   const [error, setError] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // État pour la modal de suppression
 
   useEffect(() => {
     const fetchBookDetails = async () => {
@@ -21,6 +24,16 @@ const BookDetailPage = () => {
 
     fetchBookDetails();
   }, [id]);
+
+  const handleDelete = async () => {
+    try {
+      await axios.delete(`http://127.0.0.1:3001/books/${id}`);
+      alert("Livre supprimé avec succès.");
+      navigate("/books"); // Rediriger vers la liste des livres après suppression
+    } catch (error) {
+      console.error("Erreur lors de la suppression du livre :", error);
+    }
+  };
 
   if (error) return <p className="text-center text-red-500">{error}</p>;
   if (!book) return <p className="text-center">Chargement...</p>;
@@ -51,8 +64,28 @@ const BookDetailPage = () => {
           )}
         </p>
 
+        {/* Bouton pour supprimer le livre */}
         <button
-          onClick={() => window.history.back()}
+          onClick={() => setIsDeleteModalOpen(true)}
+          className="mt-4 w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 transition duration-300"
+        >
+          Supprimer le livre
+        </button>
+        
+        {/* Modal de confirmation de suppression */}
+        {isDeleteModalOpen && (
+          <ModalDeleteBook
+            onCancel={() => setIsDeleteModalOpen(false)}
+            onConfirm={() => {
+              handleDelete();
+              setIsDeleteModalOpen(false);
+            }}
+          />
+        )}
+
+        {/* Bouton de retour */}
+        <button
+          onClick={() => navigate(-1)}
           className="mt-4 w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition duration-300"
         >
           Retour
