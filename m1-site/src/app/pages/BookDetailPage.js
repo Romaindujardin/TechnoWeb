@@ -2,20 +2,39 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-import ModalDeleteBook from "../components/ModalDeleteBook"; // Import de la modal de suppression
+import ModalDeleteBook from "../components/ModalDeleteBook";
+import ReviewDrawer from "../components/ReviewDrawer";
 
 const BookDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [book, setBook] = useState(null);
+  const [reviews, setReviews] = useState([]);
+  const [averageRating, setAverageRating] = useState(0);
+  const [reviewCounts, setReviewCounts] = useState({});
   const [error, setError] = useState(null);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // État pour la modal de suppression
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   useEffect(() => {
     const fetchBookDetails = async () => {
       try {
         const response = await axios.get(`http://127.0.0.1:3001/books/${id}`);
         setBook(response.data);
+
+        const reviewsResponse = await axios.get(`http://127.0.0.1:3001/reviews`);
+        const filteredReviews = reviewsResponse.data.filter((review) => review.book.id === parseInt(id));
+        setReviews(filteredReviews);
+
+        const totalReviews = filteredReviews.length;
+        const starsSum = filteredReviews.reduce((sum, review) => sum + review.stars, 0);
+        setAverageRating((starsSum / totalReviews).toFixed(1));
+
+        const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+        filteredReviews.forEach((review) => {
+          counts[review.stars] += 1;
+        });
+        setReviewCounts(counts);
       } catch (error) {
         console.error("Erreur lors de la récupération des détails du livre :", error);
         setError("Impossible de charger les détails du livre. Veuillez réessayer.");
@@ -29,7 +48,7 @@ const BookDetailPage = () => {
     try {
       await axios.delete(`http://127.0.0.1:3001/books/${id}`);
       alert("Livre supprimé avec succès.");
-      navigate("/books"); // Rediriger vers la liste des livres après suppression
+      navigate("/books");
     } catch (error) {
       console.error("Erreur lors de la suppression du livre :", error);
     }
@@ -38,7 +57,6 @@ const BookDetailPage = () => {
   if (error) return <p className="text-center text-red-500">{error}</p>;
   if (!book) return <p className="text-center">Chargement...</p>;
 
-  // Extraire l'année de la date de publication
   const publicationYear = new Date(book.publicationDate).getFullYear();
 
   return (
@@ -52,7 +70,6 @@ const BookDetailPage = () => {
           <strong>Année de publication :</strong> {publicationYear}
         </p>
         
-        {/* Lien vers la page de l'auteur */}
         <p className="text-gray-600 mb-2">
           <strong>Auteur :</strong>{" "}
           {book.author ? (
@@ -64,6 +81,23 @@ const BookDetailPage = () => {
           )}
         </p>
 
+        {/* Bouton pour ouvrir le Drawer des avis */}
+        <button
+          onClick={() => setIsDrawerOpen(true)}
+          className="mt-4 w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition duration-300"
+        >
+          Voir les avis
+        </button>
+
+        {/* Drawer pour afficher les avis */}
+        <ReviewDrawer
+          open={isDrawerOpen}
+          onClose={() => setIsDrawerOpen(false)}
+          reviews={reviews}
+          averageRating={averageRating}
+          reviewCounts={reviewCounts}
+        />
+
         {/* Bouton pour supprimer le livre */}
         <button
           onClick={() => setIsDeleteModalOpen(true)}
@@ -72,7 +106,6 @@ const BookDetailPage = () => {
           Supprimer le livre
         </button>
         
-        {/* Modal de confirmation de suppression */}
         {isDeleteModalOpen && (
           <ModalDeleteBook
             onCancel={() => setIsDeleteModalOpen(false)}
@@ -83,7 +116,6 @@ const BookDetailPage = () => {
           />
         )}
 
-        {/* Bouton de retour */}
         <button
           onClick={() => navigate(-1)}
           className="mt-4 w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition duration-300"
