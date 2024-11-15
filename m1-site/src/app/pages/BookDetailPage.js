@@ -16,6 +16,19 @@ const BookDetailPage = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
+  // Fonction pour calculer la moyenne et le décompte des avis
+  const calculateReviewStats = (filteredReviews) => {
+    const totalReviews = filteredReviews.length;
+    const starsSum = filteredReviews.reduce((sum, review) => sum + review.stars, 0);
+    setAverageRating(totalReviews > 0 ? (starsSum / totalReviews).toFixed(1) : 0);
+
+    const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    filteredReviews.forEach((review) => {
+      counts[review.stars] += 1;
+    });
+    setReviewCounts(counts);
+  };
+
   useEffect(() => {
     const fetchBookDetails = async () => {
       try {
@@ -25,16 +38,7 @@ const BookDetailPage = () => {
         const reviewsResponse = await axios.get(`http://127.0.0.1:3001/reviews`);
         const filteredReviews = reviewsResponse.data.filter((review) => review.book.id === parseInt(id));
         setReviews(filteredReviews);
-
-        const totalReviews = filteredReviews.length;
-        const starsSum = filteredReviews.reduce((sum, review) => sum + review.stars, 0);
-        setAverageRating((starsSum / totalReviews).toFixed(1));
-
-        const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-        filteredReviews.forEach((review) => {
-          counts[review.stars] += 1;
-        });
-        setReviewCounts(counts);
+        calculateReviewStats(filteredReviews);
       } catch (error) {
         console.error("Erreur lors de la récupération des détails du livre :", error);
         setError("Impossible de charger les détails du livre. Veuillez réessayer.");
@@ -54,6 +58,33 @@ const BookDetailPage = () => {
     }
   };
 
+  const handleAddReview = async (newReview) => {
+    try {
+      const response = await axios.post("http://127.0.0.1:3001/reviews", {
+        ...newReview,
+        bookId: book.id, // Associer l'avis au livre actuel
+      });
+  
+      // Mettre à jour la liste des avis après l'ajout
+      setReviews((prevReviews) => [...prevReviews, response.data]);
+  
+      // Recalculer la moyenne et les pourcentages
+      const updatedReviews = [...reviews, response.data];
+      const totalReviews = updatedReviews.length;
+      const starsSum = updatedReviews.reduce((sum, review) => sum + review.stars, 0);
+      setAverageRating((starsSum / totalReviews).toFixed(1));
+  
+      const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+      updatedReviews.forEach((review) => {
+        counts[review.stars] += 1;
+      });
+      setReviewCounts(counts);
+    } catch (error) {
+      console.error("Erreur lors de l'ajout de l'avis :", error);
+      alert("Impossible d'ajouter l'avis. Veuillez réessayer.");
+    }
+  };
+  
   if (error) return <p className="text-center text-red-500">{error}</p>;
   if (!book) return <p className="text-center">Chargement...</p>;
 
@@ -69,7 +100,7 @@ const BookDetailPage = () => {
         <p className="text-gray-600 mb-2">
           <strong>Année de publication :</strong> {publicationYear}
         </p>
-        
+
         <p className="text-gray-600 mb-2">
           <strong>Auteur :</strong>{" "}
           {book.author ? (
@@ -96,6 +127,7 @@ const BookDetailPage = () => {
           reviews={reviews}
           averageRating={averageRating}
           reviewCounts={reviewCounts}
+          onAddReview={handleAddReview} // Passer la fonction d'ajout ici
         />
 
         {/* Bouton pour supprimer le livre */}
@@ -105,7 +137,7 @@ const BookDetailPage = () => {
         >
           Supprimer le livre
         </button>
-        
+
         {isDeleteModalOpen && (
           <ModalDeleteBook
             onCancel={() => setIsDeleteModalOpen(false)}
