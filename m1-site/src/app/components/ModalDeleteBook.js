@@ -1,6 +1,7 @@
 // src/app/components/ModalDeleteBook.js
 import React from "react";
 
+// Composant pour confirmer la suppression d'un livre
 const ModalDeleteBook = ({ onCancel, onConfirm }) => {
   return (
     <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">

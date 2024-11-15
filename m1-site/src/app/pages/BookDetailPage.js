@@ -29,6 +29,7 @@ const BookDetailPage = () => {
     setReviewCounts(counts);
   };
 
+  // Fonction pour récupérer les détails du livre et les avis associés
   useEffect(() => {
     const fetchBookDetails = async () => {
       try {
@@ -48,6 +49,7 @@ const BookDetailPage = () => {
     fetchBookDetails();
   }, [id]);
 
+  // Fonction pour supprimer le livre
   const handleDelete = async () => {
     try {
       await axios.delete(`http://127.0.0.1:3001/books/${id}`);
@@ -58,6 +60,7 @@ const BookDetailPage = () => {
     }
   };
 
+  // Fonction pour ajouter un avis
   const handleAddReview = async (newReview) => {
     try {
       const response = await axios.post("http://127.0.0.1:3001/reviews", {

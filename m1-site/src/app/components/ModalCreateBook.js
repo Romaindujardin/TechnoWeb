@@ -1,6 +1,7 @@
 // src/app/components/ModalCreateBook.js
 import React from "react";
 
+// Composant pour ajouter un livre
 const ModalCreateBook = ({ isOpen, onClose, newBook, handleChange, addBook }) => {
   if (!isOpen) return null;
 

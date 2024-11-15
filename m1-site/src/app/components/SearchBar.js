@@ -1,6 +1,7 @@
 // src/app/components/SearchBar.js
 import React from "react";
 
+// Composant pour la barre de recherche
 const SearchBar = ({ searchQuery, onSearchChange, placeholder = "Rechercher..." }) => {
   return (
     <div className="flex justify-center mt-6 px-4">

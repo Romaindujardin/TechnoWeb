@@ -2,6 +2,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 
+// Composant pour la barre de navigation
 const Navbar = () => {
   const location = useLocation();
 
