@@ -1,4 +1,3 @@
-// src/app/pages/BooksPage.js
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Breadcrumb from "../components/Breadcrumb";
@@ -21,24 +20,42 @@ const BooksPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState(null);
 
-  // Fonction pour récupérer la liste des livres
+  // Fonction pour récupérer les livres avec la note moyenne
   const fetchBooks = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:3001/books");
-      const uniqueBooks = response.data.reduce((acc, current) => {
-        const isDuplicate = acc.find((item) => item.id === current.id);
-        if (!isDuplicate) acc.push(current);
-        return acc;
-      }, []);
-      setBooks(uniqueBooks);
+      const booksResponse = await axios.get("http://127.0.0.1:3001/books");
+      const authorsResponse = await axios.get("http://127.0.0.1:3001/authors");
+      const reviewsResponse = await axios.get("http://127.0.0.1:3001/reviews");
+
+      const booksWithRatings = booksResponse.data.map((book) => {
+        const bookReviews = reviewsResponse.data.filter(
+          (review) => review.book.id === book.id
+        );
+        const averageRating =
+          bookReviews.reduce((sum, review) => sum + review.stars, 0) /
+          bookReviews.length || 0;
+
+        const author = authorsResponse.data.find((a) => a.id === book.authorId);
+
+        return {
+          ...book,
+          authorName: author ? author.name : "Auteur inconnu",
+          averageRating: parseFloat(averageRating.toFixed(1)),
+        };
+      });
+
+      setBooks(booksWithRatings);
       setError(null);
     } catch (error) {
-      console.error("Erreur lors de la récupération des livres:", error);
+      console.error("Erreur lors de la récupération des livres :", error);
       setError("Impossible de récupérer les livres. Veuillez réessayer.");
     }
   };
 
-  // Fonction pour ajouter un nouveau livre
+  useEffect(() => {
+    fetchBooks();
+  }, []);
+
   const addBook = async () => {
     try {
       const formattedBook = {
@@ -55,21 +72,15 @@ const BooksPage = () => {
       });
       setIsModalOpen(false);
     } catch (error) {
-      console.error("Erreur lors de l'ajout du livre:", error.response || error);
+      console.error("Erreur lors de l'ajout du livre :", error.response || error);
     }
   };
 
-  // Gestion des changements dans le formulaire d'ajout
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewBook((prev) => ({ ...prev, [name]: value }));
   };
 
-  useEffect(() => {
-    fetchBooks();
-  }, []);
-
-  // Gestion du tri et du filtrage des livres
   const sortedBooks = [...books]
     .filter((book) =>
       book.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -99,7 +110,6 @@ const BooksPage = () => {
         </button>
       </div>
 
-      {/* Affichage d'une erreur en cas de problème */}
       {error && <p className="text-center text-red-500 mt-4">{error}</p>}
 
       {/* Barre de recherche */}
