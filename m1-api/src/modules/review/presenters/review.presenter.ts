@@ -7,6 +7,7 @@ export class ReviewPresenter {
   comment: string;
   stars: number;
   book: Partial<Book>; // Inclure un objet complet de type Book en utilisant `Partial` pour une flexibilité
+  createdAt: Date;
 
   constructor(review: Review) {
     this.id = review.id;
@@ -21,5 +22,6 @@ export class ReviewPresenter {
           // Ajoute d'autres propriétés de Book si nécessaire
         }
       : null;
+    this.createdAt = review.createdAt;
   }
 }
