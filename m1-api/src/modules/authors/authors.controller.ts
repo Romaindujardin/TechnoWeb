@@ -11,7 +11,7 @@ import {
 import { AuthorsService } from './authors.service';
 import { CreateAuthorDto } from './dtos/create-author.dto';
 import { UpdateAuthorDto } from './dtos/update-author.dto';
-import { AuthorPresenter } from './presenters/author.presenter'; // Importez AuthorPresenter
+import { AuthorPresenter } from './presenters/author.presenter'; // Import AuthorPresenter
 
 @Controller('authors')
 export class AuthorsController {

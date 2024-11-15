@@ -10,8 +10,8 @@ import {
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dtos/create-book.dto';
 import { UpdateBookDto } from './dtos/update-book.dto';
-import { BookPresenter } from './presenters/book.presenter'; // Importez le BookPresenter
-import { Book } from './entities/book.entity'; // Importez le type Book
+import { BookPresenter } from './presenters/book.presenter'; // Importe le BookPresenter
+import { Book } from './entities/book.entity'; // Importe le type Book
 
 @Controller('books')
 export class BooksController {

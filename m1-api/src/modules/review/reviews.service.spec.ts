@@ -1,4 +1,4 @@
-// src/modules/review/reviews.service.spec.ts
+// Tests unitaires pour le service ReviewsService
 import { Test, TestingModule } from '@nestjs/testing';
 import { ReviewsService } from './reviews.service';
 import { ReviewsRepository } from './reviews.repository';
@@ -17,14 +17,14 @@ describe('ReviewsService', () => {
         book: { id: 1, title: 'Mock Book Title' } as any,
     };
 
-    // Typage du mock pour chaque méthode
+    // Mock des méthodes du repository avec des valeurs de retour fictives
     const mockReviewsRepository = {
         create: jest.fn().mockResolvedValue(mockReview as Review),
         findAllReviews: jest.fn().mockResolvedValue([mockReview as Review]),
         findOneReview: jest.fn().mockResolvedValue(mockReview as Review),
         updateReview: jest.fn().mockResolvedValue(mockReview as Review),
         deleteReview: jest.fn().mockResolvedValue(undefined),
-    } as unknown as jest.Mocked<Partial<ReviewsRepository>>; // Ici on cast le mock
+    } as unknown as jest.Mocked<Partial<ReviewsRepository>>;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -38,10 +38,12 @@ describe('ReviewsService', () => {
         repository = module.get<Partial<ReviewsRepository>>(ReviewsRepository);
     });
 
+    // Teste la définition du service
     it('should be defined', () => {
         expect(service).toBeDefined();
     });
 
+    // Teste la création d'une review
     it('should create a review', async () => {
         const createReviewDto: CreateReviewDto = {
             comment: 'Great book!',
@@ -50,23 +52,26 @@ describe('ReviewsService', () => {
         };
         const result = await service.create(createReviewDto);
         expect(result).toEqual(mockReview);
-        expect(repository.create).toHaveBeenCalledWith(createReviewDto);
+        expect(repository.create).toHaveBeenCalledWith(createReviewDto);  // Vérifie l'appel du repository
     });
 
+    // Teste la récupération de toutes les reviews
     it('should find all reviews', async () => {
         const result = await service.findAll();
         expect(result).toEqual([mockReview]);
-        expect(repository.findAllReviews).toHaveBeenCalled();
+        expect(repository.findAllReviews).toHaveBeenCalled();  // Vérifie l'appel du repository
     });
 
+    // Teste la récupération d'une review par son ID
     it('should find one review', async () => {
         const result = await service.findOne(1);
         expect(result).toEqual(mockReview);
-        expect(repository.findOneReview).toHaveBeenCalledWith(1);
+        expect(repository.findOneReview).toHaveBeenCalledWith(1);  // Vérifie l'appel du repository
     });
 
+    // Teste si une exception est lancée lorsque la review n'est pas trouvée
     it('should throw a NotFoundException if review not found', async () => {
-        (repository.findOneReview as jest.Mock).mockResolvedValue(null); // Cast ici pour que TypeScript reconnaisse
-        await expect(service.findOne(999)).rejects.toThrow(NotFoundException);
+        (repository.findOneReview as jest.Mock).mockResolvedValue(null); // Mock du retour null
+        await expect(service.findOne(999)).rejects.toThrow(NotFoundException);  // Vérifie que l'exception est levée
     });
 });
