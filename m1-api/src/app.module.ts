@@ -14,7 +14,7 @@ import { Review } from './modules/review/entities/review.entity';
   imports: [
     TypeOrmModule.forRoot({
       type: 'sqlite',
-      database: 'db', // Chemin vers ta base de données SQLite
+      database: 'db', // Chemin vers la base de données SQLite
       entities: [Book, Author, Review], // Import direct des entités
       synchronize: true,
     }),

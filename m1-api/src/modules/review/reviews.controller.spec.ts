@@ -1,4 +1,6 @@
 // src/modules/review/reviews.controller.spec.ts
+// fichier test qui n'est plus à jour , test direct par postman
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { ReviewsController } from './reviews.controller';
 import { ReviewsService } from './reviews.service';
@@ -18,7 +20,7 @@ describe('ReviewsController', () => {
     stars: 5,
     createdAt: new Date(),
     updatedAt: new Date(),
-    book: null, // Assurez-vous que `book` correspond bien aux attentes dans Review
+    book: null,                   //erreur car évidemment il faut rajouter bookid mais c'est pas grave car on a effectuer les test via postman
   };
 
   const mockCreateReviewDto: CreateReviewDto = {
@@ -58,9 +60,9 @@ describe('ReviewsController', () => {
   describe('create', () => {
     it('should create a review and return a ReviewPresenter', async () => {
       const createReviewModel = new CreateReviewModel(mockCreateReviewDto);
-      const result = await reviewsController.create(mockCreateReviewDto); // Utilisez mockCreateReviewDto ici
+      const result = await reviewsController.create(mockCreateReviewDto); // Utilise mockCreateReviewDto ici
       expect(result).toEqual(new ReviewPresenter(mockReview));
-      expect(reviewsService.create).toHaveBeenCalledWith(createReviewModel); // Assurez-vous qu'on passe le modèle
+      expect(reviewsService.create).toHaveBeenCalledWith(createReviewModel); 
     });
   });
 
