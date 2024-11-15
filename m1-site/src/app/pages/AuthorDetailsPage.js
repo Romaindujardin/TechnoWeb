@@ -1,6 +1,6 @@
 // src/app/pages/AuthorDetailsPage.js
 import React, { useEffect, useState } from "react"; 
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import Breadcrumb from "../components/Breadcrumb";
@@ -156,16 +156,21 @@ const AuthorDetailsPage = () => {
         {/* Liste des livres de l'auteur */}
         <div className="mt-8">
           <h2 className="text-2xl font-semibold mb-4">Livres de {author.name}</h2>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {books.length > 0 ? (
               books
                 .filter((book) => book.authorId === author.id)
                 .map((book) => (
                   <div key={book.id} className="bg-white p-4 rounded-lg shadow-lg">
-                    <h3 className="text-xl font-semibold">{book.title}</h3>
+                    <h3 className="text-blue-500 text-xl hover:underline"><Link to={`/books/${book.id}`} >
+                      {book.title}
+                    </Link></h3>
+                    
                     <p className="text-gray-600">Description : {book.description || "Pas de description."}</p>
                   </div>
                 ))
+               
             ) : (
               <p>Aucun livre trouvé pour cet auteur.</p>
             )}

@@ -1,18 +1,18 @@
-// src/app/pages/AuthorsPage.js
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import Breadcrumb from "../components/Breadcrumb";
-import AuthorCard from "../components/AuthorCard"; // Import du composant
-import { Link } from "react-router-dom"; // Import de Link pour créer des liens
+import AuthorCard from "../components/AuthorCard";
+import { Link } from "react-router-dom";
 
 const AuthorsPage = () => {
   const [authors, setAuthors] = useState([]);
+  const [books, setBooks] = useState([]); // Ajout d'un état pour les livres
   const [newAuthor, setNewAuthor] = useState({ name: "", photo: "", biography: "" });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Fonction pour récupérer la liste des auteurs
+  // Fonction pour récupérer les auteurs
   const fetchAuthors = async () => {
     try {
       const response = await axios.get("http://127.0.0.1:3001/authors");
@@ -27,34 +27,42 @@ const AuthorsPage = () => {
     }
   };
 
+  // Fonction pour récupérer les livres
+  const fetchBooks = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:3001/books");
+      setBooks(response.data);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des livres:", error);
+    }
+  };
+
   useEffect(() => {
     fetchAuthors();
+    fetchBooks();
   }, []);
 
-  // Fonction pour ajouter un nouvel auteur
+  // Fonction pour ajouter un auteur
   const addAuthor = async () => {
     try {
       await axios.post("http://127.0.0.1:3001/authors", newAuthor);
       fetchAuthors();
       setNewAuthor({ name: "", photo: "", biography: "" });
-      setIsModalOpen(false); // Fermer la modal après ajout
+      setIsModalOpen(false);
     } catch (error) {
       console.error("Erreur lors de l'ajout de l'auteur:", error);
     }
   };
 
-  // Fonction pour gérer les changements dans le formulaire d'ajout
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewAuthor((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Fonction pour gérer la recherche d'auteur
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
   };
 
-  // Filtrer les auteurs en fonction de la recherche
   const filteredAuthors = authors.filter((author) =>
     author.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -64,7 +72,6 @@ const AuthorsPage = () => {
       <Navbar />
       <Breadcrumb />
       
-      {/* Titre et bouton d'ajout */}
       <div className="flex justify-between items-center px-4 mt-6">
         <h1 className="text-2xl font-bold text-center w-full">Liste des auteurs</h1>
         <button
@@ -75,7 +82,6 @@ const AuthorsPage = () => {
         </button>
       </div>
 
-      {/* Barre de recherche sous le titre */}
       <div className="flex justify-center mt-6 px-4">
         <input
           type="text"
@@ -86,7 +92,6 @@ const AuthorsPage = () => {
         />
       </div>
 
-      {/* Modal pour le formulaire d'ajout d'auteur */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full relative">
@@ -130,12 +135,11 @@ const AuthorsPage = () => {
         </div>
       )}
 
-      {/* Liste des auteurs */}
       <div className="grid grid-cols-5 gap-6 p-4">
         {filteredAuthors.length > 0 ? (
           filteredAuthors.map((author) => (
             <Link to={`/authors/${author.id}`} key={author.id}>
-              <AuthorCard author={author} />
+              <AuthorCard author={author} books={books} />
             </Link>
           ))
         ) : (
