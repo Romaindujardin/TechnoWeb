@@ -1,6 +1,7 @@
 // src/app/components/BookSort.js
 import React from "react";
 
+//²Composant pour trier les livres
 const BookSort = ({ sortCriteria, onSortChange }) => {
   return (
     <div className="flex justify-end mt-6">

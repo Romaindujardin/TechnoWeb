@@ -31,10 +31,19 @@ const StarRating = ({ rating }) => {
   );
 };
 
+// Composant pour afficher les avis
 const ReviewDrawer = ({ open, onClose, reviews, averageRating, reviewCounts, onAddReview }) => {
   const [isModalOpen, setIsModalOpen] = useState(false); // État pour la modale d'ajout d'avis
+  const [sortOrder, setSortOrder] = useState("asc"); // État pour gérer l'ordre du tri
 
   const totalReviews = reviews.length;
+
+  // Fonction pour trier les avis selon l'ordre de tri
+  const sortedReviews = [...reviews].sort((a, b) => {
+    const dateA = new Date(a.createdAt);
+    const dateB = new Date(b.createdAt);
+    return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+  });
 
   return (
     <div
@@ -99,9 +108,19 @@ const ReviewDrawer = ({ open, onClose, reviews, averageRating, reviewCounts, onA
               ))}
             </div>
 
+            {/* Bouton pour changer l'ordre de tri */}
+            <div className="mb-4 text-center">
+              <button
+                onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+                className="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300"
+              >
+                Trier par date {sortOrder === "asc" ? "descendante" : "ascendante"}
+              </button>
+            </div>
+
             {/* Affichage des avis individuels */}
             <div className="space-y-4">
-              {reviews.map((review) => (
+              {sortedReviews.map((review) => (
                 <div key={review.id} className="p-4 border rounded-lg bg-gray-50">
                   <div className="flex items-center mb-2">
                     <StarRating rating={review.stars} />
@@ -131,6 +150,7 @@ const ReviewDrawer = ({ open, onClose, reviews, averageRating, reviewCounts, onA
   );
 };
 
+// Validation des props
 ReviewDrawer.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,

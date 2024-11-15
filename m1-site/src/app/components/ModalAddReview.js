@@ -2,10 +2,12 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 
+// Composant pour ajouter un avis
 const ModalAddReview = ({ isOpen, onClose, onSubmit }) => {
   const [stars, setStars] = useState(0);
   const [comment, setComment] = useState("");
 
+  // Fonction pour soumettre l'avis
   const handleSubmit = () => {
     if (stars < 1 || stars > 5) {
       alert("Veuillez donner une note entre 1 et 5 étoiles.");
@@ -60,6 +62,7 @@ const ModalAddReview = ({ isOpen, onClose, onSubmit }) => {
   );
 };
 
+// Définition des types des props
 ModalAddReview.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,

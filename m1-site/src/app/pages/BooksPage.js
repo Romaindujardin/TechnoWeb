@@ -7,6 +7,7 @@ import BookSort from "../components/BookSort";
 import ModalCreateBook from "../components/ModalCreateBook";
 import axios from "axios";
 
+// Page pour afficher la liste des livres
 const BooksPage = () => {
   const [books, setBooks] = useState([]);
   const [newBook, setNewBook] = useState({
@@ -52,10 +53,13 @@ const BooksPage = () => {
     }
   };
 
+  // Récupérer les livres au chargement de la page
   useEffect(() => {
     fetchBooks();
   }, []);
 
+
+  // Fonction pour ajouter un livre
   const addBook = async () => {
     try {
       const formattedBook = {
@@ -76,11 +80,14 @@ const BooksPage = () => {
     }
   };
 
+
+  // Fonction pour mettre à jour les valeurs du formulaire
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewBook((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Filtrer et trier les livres
   const sortedBooks = [...books]
     .filter((book) =>
       book.title.toLowerCase().includes(searchQuery.toLowerCase())
