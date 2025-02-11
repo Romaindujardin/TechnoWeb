@@ -2,10 +2,10 @@
 ## Étapes de Collaboration
 
 ### Cloner le dépôt :
-Ils ouvrent un terminal (CMD, PowerShell, ou un terminal sur Mac).
-Ils exécutent la commande suivante pour cloner le dépôt :
+Ouvrir un terminal (CMD, PowerShell, ou un terminal sur Mac).
+Exécuter la commande suivante pour cloner le dépôt :
 "git clone https://github.com/Romaindujardin/TechnoWeb.git"
-Cela crée un dossier DriveMe dans leur répertoire utilisateur, qui contient tous les fichiers du projet.
+Cela crée un dossier TechnoWeb dans leur répertoire utilisateur, qui contient tous les fichiers du projet.
 
 ### Naviguer dans le dossier cloné :
 Ils doivent se déplacer dans le dossier cloné :
@@ -16,7 +16,7 @@ Ils créent une nouvelle branche pour travailler sur leurs modifications, par ex
 "git checkout -b accueil  # Ici, "accueil" est le nom de la branche"
 
 ### Faire des modifications :
-Ils ouvrent Unity et effectuent les modifications nécessaires (ajouter des modèles, scripts, textures, etc.).
+Ils ouvrent VSCode et effectuent les modifications nécessaires (ajouter des composants, scripts, textures, etc.).
 
 ### Ajouter les fichiers modifiés :
 Une fois les modifications terminées, ils retournent au terminal et ajoutent les fichiers modifiés à l'index :
