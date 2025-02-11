@@ -1,4 +1,3 @@
-# TechnoWeb
 ## Initialisation du projet
 
 ### Création d'un environnement virtuel
