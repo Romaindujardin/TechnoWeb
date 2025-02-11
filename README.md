@@ -36,5 +36,5 @@ Les interactions avec la base de données sont effectuées à l'aide des requêt
 - **Base de données** : Stockage des informations des auteurs et des livres.
 
 ## 📥 Installation et utilisation
-[Tuto GIT](Tuto%20GIT.md)
+[Tuto SETUP](Tuto%20SETUP.md)
 
